@@ -9,6 +9,10 @@
 # en prod' pas ici. ^^
 FROM python:3.10-slim AS base
 ARG POETRY_VERSION
+ARG PG_USER
+ARG PG_PWD
+ARG PG_HOST
+ARG PG_DATABASE
 
 # je suis pas assez devops pour savoir si c'est mieux
 # d'utiliser /code /app ou autre... je reste sur mes
@@ -31,4 +35,7 @@ RUN poetry install --no-interaction --no-ansi
 FROM base AS final
 WORKDIR /app
 COPY ./src/msio /app/msio
+COPY ./alembic /app/alembic/
+COPY ./alembic.ini /app/
+
 CMD ["uvicorn", "msio.logme.__main__:app", "--reload", "--host", "0.0.0.0"]

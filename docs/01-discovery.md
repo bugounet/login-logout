@@ -124,20 +124,4 @@ que tu puisse jeter un oeil au gitlog en local
 si le coeur t'en dit. En fonction de ta réponse,
 je mettrai mon .git ou pas dans l'archive.
 
-## Setup de l'env
-
-Merci pour le fichier toml, ça aide. J'installe
-tout, je configure mon EDI et ça run... 
-
-pas de surprises. A l'execution, j'arrive bien à
-contacter le hello world.
-
-Il va me falloir une instance PG. J'ai pas
-envie de souiller mon ordi, donc je vais le mettre
-dans un conteneur docker. J'en profilte pour te
-remettre le `docker-compose.yml`. Rien de fou,
-je met 2 services, PG et l'API.
-
-
-
-
+Attaquons avec le [setup](02-setup.md)
