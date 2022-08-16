@@ -1,3 +1,8 @@
 .idea
 *.pyc
 
+# Ne pas traquer poetry.lock va me simplifier la vie si
+# on est deux à bosser dessus (c'est pas mon cas m'enfin ça vaut
+# le coup de le dire ¯\_(ツ)_/¯ pour expliquer pourquoi je l'ai
+# exclu alors que la bonne pratique c'est de le traquer)
+poetry.lock
