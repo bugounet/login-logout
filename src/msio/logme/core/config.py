@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     def validate_postgres_conn(cls, v: Optional[str], values: Dict[str, Any]) -> str:
         if isinstance(v, str):
             return v
+        print("Validating postgres connection")
         password: SecretStr = values.get("PG_PASSWORD", SecretStr(""))
         return "{scheme}://{user}:{password}@{host}/{db}".format(
             scheme="postgresql+asyncpg",
@@ -28,6 +29,7 @@ class Settings(BaseSettings):
             host=values.get("PG_HOST"),
             db=values.get("PG_NAME"),
         )
+
 
     FIRST_USER_EMAIL: EmailStr
     FIRST_USER_PASSWORD: SecretStr
@@ -45,10 +47,10 @@ def load_config_from_file() -> Settings:
     with open(CONFIG_FILE, 'r') as f:
         data = yaml.safe_load(f)
         config = Settings(PROJECT_NAME=data.get('MSIO_LOG_ME_PROJECT_NAME', default='LogMe'),
-                          PG_NAME=data.get('MSIO_LOG_ME_PG', default='LogMe'),
+                          PG_NAME=data.get('MSIO_LOG_ME_PG_DB', default='LogMe'),
                           PG_HOST=data.get('MSIO_LOG_ME_PG_HOST', default='localhost'),
-                          PG_USER=data.get('MSIO_LOG_ME_PG_USER', default='root'),
-                          PG_PASSWORD=data.get('MSIO_LOG_ME_PG_HOST', default='localhost'),
+                          PG_USER=data.get('MSIO_LOG_ME_PG_USER'),
+                          PG_PASSWORD=data.get('MSIO_LOG_ME_PG_PASSWORD'),
                           PG_CHECK_SAME_THREAD=data.get('MSIO_LOG_ME_PG_CHECK_SAME_THREAD', default=True),
                           FIRST_USER_EMAIL=data.get('MSIO_LOG_ME_USER_EMAIL', default='admin@corporation.com'),
                           FIRST_USER_PASSWORD=data.get('MSIO_LOG_ME_USER_PASSWORD', default='IsASecr3t'),
@@ -62,10 +64,10 @@ def load_config_from_file() -> Settings:
 # FIXME: use pydantic.Field(...,env=...)
 def load_config_file_from_env() -> Settings:
     config = Settings(PROJECT_NAME=getenv('MSIO_LOG_ME_PROJECT_NAME', default='LogMe'),
-                      PG_NAME=getenv('MSIO_LOG_ME_PG', default='LogMe'),
-                      PG_HOST=getenv('MSIO_LOG_ME_PG_HOST', default='localhost'),
-                      PG_USER=getenv('MSIO_LOG_ME_PG_USER', default='root'),
-                      PG_PASSWORD=getenv('MSIO_LOG_ME_PG_HOST', default='localhost'),
+                      PG_NAME=getenv('MSIO_LOG_ME_PG_DB', default='LogMe'),
+                      PG_HOST=getenv('MSIO_LOG_ME_PG_HOST', default='postgres'),
+                      PG_USER=getenv('MSIO_LOG_ME_PG_USER'),
+                      PG_PASSWORD=getenv('MSIO_LOG_ME_PG_PASSWORD'),
                       PG_CHECK_SAME_THREAD=getenv('MSIO_LOG_ME_PG_CHECK_SAME_THREAD', default=True),
                       FIRST_USER_EMAIL=getenv('MSIO_LOG_ME_USER_EMAIL', default='admin@corporation.com'),
                       FIRST_USER_PASSWORD=getenv('MSIO_LOG_ME_USER_PASSWORD', default='IsASecr3t'),

@@ -6,3 +6,7 @@
 # le coup de le dire ¯\_(ツ)_/¯ pour expliquer pourquoi je l'ai
 # exclu alors que la bonne pratique c'est de le traquer)
 poetry.lock
+
+# mes mots de passe! 😱
+.env
+

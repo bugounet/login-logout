@@ -5,7 +5,7 @@ from msio.logme.api import router
 
 def create_application() -> FastAPI:
     configuration = config.load_config_file()
-    application = FastAPI(title=configuration.project_name)
+    application = FastAPI(title=configuration.PROJECT_NAME)
     application.include_router(router)
     return application
 

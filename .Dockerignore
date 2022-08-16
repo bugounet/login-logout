@@ -1,0 +1,8 @@
+tests
+docs
+docker
+.pytest_cache
+__pycache__
+*.pyc
+.git
+.gitignore
