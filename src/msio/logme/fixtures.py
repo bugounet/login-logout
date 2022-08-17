@@ -1,18 +1,24 @@
-from msio.logme.models.users import User
+from msio.logme.crud.users import PostgresRepository
+from msio.logme.domain.entities import UserRegistration
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker, Session
 from msio.logme.core.config import Settings
 from msio.logme.core.database import engine
+from msio.logme.domain.use_cases import GetOrCreateFirstUser
+
 
 async def create_first_user(configuration: Settings):
     session = AsyncSession(bind=engine)
-    user = User(
-        firstname="first",
-        lastname="user",
-        username="alpha",
-        email=configuration.FIRST_USER_EMAIL,
-        password=str(configuration.FIRST_USER_PASSWORD)
-    )
-    session.add(user)
-    await session.commit()
-    await session.close()
+    try:
+        first_user_definition = UserRegistration(
+            first_name="first",
+            last_name="user",
+            username="first-user",
+            email=configuration.FIRST_USER_EMAIL,
+            password=str(configuration.FIRST_USER_PASSWORD)
+        )
+        use_case = GetOrCreateFirstUser(PostgresRepository(session))
+        await use_case(first_user_definition)
+    finally:
+        # in any case (crash or success) always close the session
+        await session.close()

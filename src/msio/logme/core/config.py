@@ -8,6 +8,10 @@ from pydantic import BaseSettings, EmailStr, SecretStr, validator, PostgresDsn
 
 
 class Settings(BaseSettings):
+    # Store here values we want to keep configurable, even though
+    # there is no actual way to customize them on the run.
+    API_PAGES_SIZE = 20
+
     PROJECT_NAME: str
     PG_NAME: str
     PG_HOST: str

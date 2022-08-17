@@ -12,6 +12,7 @@ def create_application() -> FastAPI:
 
 app = create_application()
 
+
 @app.on_event("startup")
 async def load_fixtures():
     configuration = config.load_config_file()
