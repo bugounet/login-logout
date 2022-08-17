@@ -1,24 +1,40 @@
 # derniere version de la syntaxe docker-compose.yml
 version: '3.8'
 
-# je met 2 services en place: api et pg
+
 services:
+  alembic_upgrade:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+      args:
+        POETRY_VERSION: 1.1.14
+    env_file:
+      - ./.env
+    links:
+      - pg:pg
+    command: alembic upgrade head
+    depends_on:
+      pg:
+        condition: service_healthy
+
+  # je met 2 services en place: api et pg
   api:
     build:
       context: ../
       dockerfile: ./docker/Dockerfile
       args:
         POETRY_VERSION: 1.1.14
-    command: uvicorn msio.logme.__main__:app --reload --host 0.0.0.0
     env_file:
       - ./.env
-    ports:
-      - 8000:8000
     links:
       - pg:pg
+    command: uvicorn msio.logme.__main__:app --reload --host 0.0.0.0
+    ports:
+      - 8000:8000
     depends_on:
-      pg:
-        condition: service_healthy
+      - "alembic_upgrade"
+      - "pg"
 
   pg:
     image: postgres:14-alpine
@@ -31,6 +47,7 @@ services:
       - 5432:5432
     healthcheck:
       # pratique pour pas lancer le serveur tant que la BDD n'est pas créée
+      # mais ça manque de variables :/
       test: [ "CMD-SHELL", "pg_isready -U pguser -d LogMe"]
       interval: 1s
       timeout: 5s

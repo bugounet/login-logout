@@ -72,10 +72,9 @@ J'ajoute alembic, et psycopg2-binary pour
 pouvoir run mes migrations.
 
 Temps passé sur cette étape :
-environ 2h principalement parce que j'ai
-rencontré un petit pépin sur le healthcheck,
-j'ai donc retiré cette option de mon 
-`docker-compose.yml` pour pas rester coincé.
+environ 3h. J'ai rencontré un petit pépin 
+sur le healthcheck, j'ai donc dormi dessus
+pour trouver mon erreur.
 
 Passons à la suite:
 [créer le premier utilisateur](03-creer-first-user.md)
