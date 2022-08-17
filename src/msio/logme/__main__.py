@@ -1,7 +1,9 @@
 from fastapi import FastAPI
-from msio.logme.core import config
+
 from msio.logme.api import router
+from msio.logme.core import config
 from msio.logme.fixtures import create_first_user
+
 
 def create_application() -> FastAPI:
     configuration = config.load_config_file()

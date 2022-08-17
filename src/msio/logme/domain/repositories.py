@@ -1,18 +1,20 @@
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from typing import List
 
 from pydantic import EmailStr
+
+from msio.logme.core.config import settings
 from msio.logme.domain.entities import User
 from msio.logme.schemas.users import UserRegistration
-from msio.logme.core.config import settings
 
 
 class UserRepository(ABC):
     @abstractmethod
     async def find_user_by_id(self, user_id: int) -> User:
-        """ Find a user using his unique identifier (id).
+        """Find a user using his unique identifier (id).
 
-        :raises: UnavailableRepositoryError when the repository can't access data.
+        :raises: UnavailableRepositoryError when the repository
+        can't access data.
 
         :param user_id: ID is a positive integer.
         :type user_id: int
@@ -24,10 +26,11 @@ class UserRepository(ABC):
 
     @abstractmethod
     async def find_user_by_email(self, email_address: EmailStr) -> User | None:
-        """ Find a user using his email address which must be unique
+        """Find a user using his email address which must be unique
         in our project.
 
-        :raises: UnavailableRepositoryError when the repository can't access data.
+        :raises: UnavailableRepositoryError when the repository can't
+        access data.
 
         :param email_address: email address of the user we're looking for.
         :type email_address: EmailStr
@@ -38,11 +41,14 @@ class UserRepository(ABC):
         ...
 
     @abstractmethod
-    async def fetch_all_users(self, *, offset: int, limit: int = settings.API_PAGES_SIZE) -> List[User]:
-        """ Get a list of all users.
+    async def fetch_all_users(
+        self, *, offset: int, limit: int = settings.API_PAGES_SIZE
+    ) -> List[User]:
+        """Get a list of all users.
         This query can return lots of Users, so you can paginate the result.
 
-        :raises: UnavailableRepositoryError when the repository can't access data.
+        :raises: UnavailableRepositoryError when the repository can't access
+        data.
 
         :param offset: Number of lines to skip
         :type offset: int
@@ -57,7 +63,7 @@ class UserRepository(ABC):
 
     @abstractmethod
     async def register_user(self, user: UserRegistration) -> User:
-        """ Whe a new user joins the platform, we'll save it to
+        """Whe a new user joins the platform, we'll save it to
         our data storage.
 
         :raises: UnavailableRepositoryError
@@ -73,7 +79,7 @@ class UserRepository(ABC):
 
     @abstractmethod
     async def forget_user(self, user_id: int) -> None:
-        """ Forget user information based on his unique identifier.
+        """Forget user information based on his unique identifier.
 
         :raises: UnavailableRepositoryError
         :raises: UnkownUserError

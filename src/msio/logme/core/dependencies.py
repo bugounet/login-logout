@@ -1,5 +1,6 @@
 from msio.logme.core.database import SessionLocal
 
+
 # Dependency
 def get_db():
     db = SessionLocal()

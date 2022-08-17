@@ -32,6 +32,18 @@ testpaths = [
     "tests",
 ]
 
+[flake8]
+max-doc-length = 72
+
+[tool.black]
+line-length = 79
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+py_version = 310
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

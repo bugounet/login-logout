@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field, InitVar
+from dataclasses import InitVar, dataclass, field
 from hashlib import sha256
 
 from msio.logme.core.config import settings
@@ -29,5 +29,9 @@ class UserRegistration:
         # like Argon2 as recommended by the OWASP.
         # I'm not in production so again, let's use the easiest for
         # commodity
-        concatenated_password = str(password) + str(settings.SECRET_KEY)
-        self.password_hash = sha256(concatenated_password.encode('utf-8')).hexdigest()
+        concatenated_password = str(password) + str(
+            settings.SECRET_KEY.get_secret_value()
+        )
+        self.password_hash = sha256(
+            concatenated_password.encode("utf-8")
+        ).hexdigest()
