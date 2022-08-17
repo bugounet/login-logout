@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from msio.logme.core.database import SessionLocal
 from msio.logme.core.authentication import ALGORITHM
-from msio.logme.crud.users import crud_user
+#from msio.logme.crud.users import crud_user
 from msio.logme.schemas.token import TokenPayload
 from msio.logme.core.config import settings
 
