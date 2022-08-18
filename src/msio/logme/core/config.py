@@ -1,7 +1,6 @@
-from os import getenv, path
+from os import getenv
 from typing import Any, Dict, Optional
 
-import yaml
 from pydantic import (
     BaseSettings,
     EmailStr,
@@ -9,8 +8,6 @@ from pydantic import (
     SecretStr,
     validator,
 )
-
-from msio.logme.core.constants import CONFIG_FILE
 
 
 class Settings(BaseSettings):
@@ -49,50 +46,10 @@ class Settings(BaseSettings):
     SECRET_KEY: SecretStr
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
-    REDIS_HOST: str
-    REDIS_PORT: int
+    TESTING: bool = False
 
 
-# FIXME: use pydantic.Field(...,env=...)
-def load_config_from_file() -> Settings:
-    config = None
-    with open(CONFIG_FILE, "r") as f:
-        data = yaml.safe_load(f)
-        config = Settings(
-            PROJECT_NAME=data.get(
-                "MSIO_LOG_ME_PROJECT_NAME", default="LogMe"
-            ),
-            PG_NAME=data.get("MSIO_LOG_ME_PG_DB", default="LogMe"),
-            PG_HOST=data.get("MSIO_LOG_ME_PG_HOST", default="localhost"),
-            PG_USER=data.get("MSIO_LOG_ME_PG_USER", default="root"),
-            PG_PASSWORD=data.get(
-                "MSIO_LOG_ME_PG_PASSWORD", default="toor"
-            ),
-            PG_CHECK_SAME_THREAD=data.get(
-                "MSIO_LOG_ME_PG_CHECK_SAME_THREAD", default=True
-            ),
-            FIRST_USER_EMAIL=data.get(
-                "MSIO_LOG_ME_USER_EMAIL", default="admin@corporation.com"
-            ),
-            FIRST_USER_PASSWORD=data.get(
-                "MSIO_LOG_ME_USER_PASSWORD", default="IsASecr3t"
-            ),
-            SECRET_KEY=data.get(
-                "MSIO_LOG_ME_SECRET_KEY", default="mysecretkey"
-            ),
-            ACCESS_TOKEN_EXPIRE_MINUTES=data.get(
-                "MSIO_LOG_ME_ACCESS_TOKEN_EXPIRE_MINUTES", default=30
-            ),
-            REDIS_HOST=data.get(
-                "MSIO_LOG_ME_REDIS_HOST", default="localhost"
-            ),
-            REDIS_PORT=data.get("MSIO_LOG_ME_REDIS_PORT", default=6380),
-        )
-    return config
-
-
-# FIXME: use pydantic.Field(...,env=...)
-def load_config_file_from_env() -> Settings:
+def load_config_from_env() -> Settings:
     config = Settings(
         PROJECT_NAME=getenv("MSIO_LOG_ME_PROJECT_NAME", default="LogMe"),
         PG_NAME=getenv("MSIO_LOG_ME_PG_DB", default="LogMe"),
@@ -112,19 +69,9 @@ def load_config_file_from_env() -> Settings:
         ACCESS_TOKEN_EXPIRE_MINUTES=getenv(
             "MSIO_LOG_ME_ACCESS_TOKEN_EXPIRE_MINUTES", default=30
         ),
-        REDIS_HOST=getenv("MSIO_LOG_ME_REDIS_HOST", default="localhost"),
-        REDIS_PORT=getenv("MSIO_LOG_ME_REDIS_PORT", default=6380),
+        TESTING=getenv("MSIO_LOG_ME_TESTING", default=False),
     )
     return config
 
 
-def load_config_file() -> Settings:
-    config = None
-    if path.exists(CONFIG_FILE):
-        config = load_config_from_file()
-    else:
-        config = load_config_file_from_env()
-    return config
-
-
-settings = load_config_file()
+settings = load_config_from_env()

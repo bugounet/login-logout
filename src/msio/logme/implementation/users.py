@@ -1,3 +1,4 @@
+import socket
 from typing import List
 
 from pydantic import EmailStr
@@ -11,6 +12,7 @@ from msio.logme.domain.entities import UserRegistrationRequest
 from msio.logme.domain.exceptions import (
     IdentityAlreadyInUse,
     InvalidCredentialsError,
+    UnavailableRepositoryError,
 )
 from msio.logme.domain.repositories import UserRepository
 from msio.logme.models.users import User as ORMUser
@@ -39,13 +41,19 @@ class PostgresUserRepository(UserRepository):
     def __init__(self, database_session: AsyncSession):
         self.database_session = database_session
 
+    async def _fetch_data(self, lookup):
+        try:
+            return await self.database_session.execute(lookup)
+        except socket.gaierror:
+            raise UnavailableRepositoryError()
+
     async def find_user_using_credentials(
         self, email: EmailStr, hashed_password: str
     ) -> UserEntity:
         lookup = select(ORMUser).filter(
             ORMUser.email == email, ORMUser.password == hashed_password
         )
-        result = await self.database_session.execute(lookup)
+        result = await self._fetch_data(lookup)
         db_user = result.scalars().first()
         if not db_user:
             raise InvalidCredentialsError()
@@ -53,7 +61,7 @@ class PostgresUserRepository(UserRepository):
 
     async def find_user_by_id(self, user_id: int) -> UserEntity | None:
         lookup = select(ORMUser).filter(ORMUser.id == user_id)
-        result = await self.database_session.execute(lookup)
+        result = await self._fetch_data(lookup)
         db_user = result.scalars().first()
         return orm_user_adapter(db_user)
 
@@ -63,7 +71,7 @@ class PostgresUserRepository(UserRepository):
         lookup = select(ORMUser).filter(
             ORMUser.email == str(email_address)
         )
-        result = await self.database_session.execute(lookup)
+        result = await self._fetch_data(lookup)
         db_user = result.scalars().first()
         return orm_user_adapter(db_user)
 
@@ -71,24 +79,26 @@ class PostgresUserRepository(UserRepository):
         self, *, offset: int, limit: int = settings.API_PAGES_SIZE
     ) -> List[UserEntity]:
         lookup = select(ORMUser).offset(offset).limit(limit)
-        users = await self.database_session.execute(lookup)
+        users = await self._fetch_data(lookup)
         return list(map(orm_user_adapter, users.scalars()))
 
     async def register_user(
-        self, user_registration: UserRegistrationRequest
+        self, registration_request: UserRegistrationRequest
     ) -> UserEntity:
         # create user in database
         db_user = ORMUser(
-            firstname=user_registration.first_name,
-            lastname=user_registration.last_name,
-            username=user_registration.username,
-            email=user_registration.email,
-            password=user_registration.password_hash,
+            firstname=registration_request.first_name,
+            lastname=registration_request.last_name,
+            username=registration_request.username,
+            email=registration_request.email,
+            password=registration_request.password_hash,
         )
         self.database_session.add(db_user)
 
         try:
             await self.database_session.commit()
+        except socket.gaierror:
+            raise UnavailableRepositoryError()
         except IntegrityError:
             raise IdentityAlreadyInUse()
 

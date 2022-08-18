@@ -14,13 +14,20 @@ from jwt import PyJWTError, decode
 from pydantic import ValidationError
 
 from msio.logme.core.config import settings
-from msio.logme.domain.exceptions import InvalidTokenError
+from msio.logme.domain.exceptions import (
+    InvalidRegistrationRequestError,
+    InvalidTokenError,
+)
 
 
 @dataclass(frozen=True, slots=True)
 class Token:
     value: str
     user_id: int
+
+    def __post_init__(self):
+        if self.user_id <= 0:
+            raise InvalidTokenError("Invalid format")
 
     @classmethod
     def parse_and_verify_token(cls, token: str, secret: str) -> Token:
@@ -33,7 +40,7 @@ class Token:
             payload = decode(
                 token, secret, algorithms=[settings.JWT_ALGORITHM]
             )
-        except (PyJWTError, ValidationError):
+        except (ValueError, PyJWTError, ValidationError):
             raise InvalidTokenError("Token could not be deserialized")
         try:
             user_id = payload["user_id"]
@@ -51,16 +58,14 @@ class User:
     email: str
 
     @staticmethod
-    def compute_password_hash(password: str) -> str:
+    def compute_password_hash(password: str, secret) -> str:
         # I'm using app's secret to hash the password.
         # It's easy to use sha256 even though a
         # hashing method that is specifically designed for this
         # like Argon2 as recommended by the OWASP.
         # I'm not in production so again, let's use the easiest for
         # commodity
-        concatenated_password = password + str(
-            settings.SECRET_KEY.get_secret_value()
-        )
+        concatenated_password = password + secret
         return sha256(concatenated_password.encode("utf-8")).hexdigest()
 
 
@@ -74,4 +79,27 @@ class UserRegistrationRequest:
     password_hash: str = field(init=False)
 
     def __post_init__(self, password: str):
-        self.password_hash = User.compute_password_hash(password)
+        """User registration holds the responsiblity
+        to validate registration requests.
+        """
+        # If I had to, i'd hook password validation pipeline
+        # somewhere around here. At the moment I put basic
+        # verifications to show the intent...
+        if len(self.first_name) > 50:
+            raise InvalidRegistrationRequestError(
+                "First name cannot exceed 50 chars"
+            )
+        if len(self.last_name) > 50:
+            raise InvalidRegistrationRequestError(
+                "Last name cannot exceed 50 chars"
+            )
+        if len(self.username) > 50:
+            raise InvalidRegistrationRequestError(
+                "Chosen username cannot exceed 50 chars"
+            )
+
+        # compute the password hash because we won't
+        # store user's plain password
+        self.password_hash = User.compute_password_hash(
+            password, settings.SECRET_KEY.get_secret_value()
+        )

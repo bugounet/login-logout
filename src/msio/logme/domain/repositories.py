@@ -34,7 +34,7 @@ class UserRepository(ABC):
         :return: User matching parameters
         :rtype: User
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def find_user_by_id(self, user_id: int) -> User:
@@ -49,7 +49,7 @@ class UserRepository(ABC):
         :rtype: User | None
         :return: Found user or None
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def find_user_by_email(
@@ -67,7 +67,7 @@ class UserRepository(ABC):
         :return: Found user or None if email missing
         :rtype: User | None
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def fetch_all_users(
@@ -88,10 +88,12 @@ class UserRepository(ABC):
         :return: Found users list. Potentially empty if no users found.
         :rtype: List[User]
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
-    async def register_user(self, user: UserRegistrationRequest) -> User:
+    async def register_user(
+        self, registration_request: UserRegistrationRequest
+    ) -> User:
         """Whe a new user joins the platform, we'll save it to
         our data storage.
 
@@ -104,7 +106,7 @@ class UserRepository(ABC):
         :return: created user object without password
         :type: User
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def forget_user(self, user_id: int) -> None:
@@ -116,7 +118,7 @@ class UserRepository(ABC):
         :param user_id: User identifier
         :type user_id: int
         """
-        ...
+        ...  # pragma: no cover
 
 
 class TokenRepository(ABC):
@@ -137,7 +139,7 @@ class TokenRepository(ABC):
         :return: Existence
         :rtype: bool
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def save_token(self, token: Token) -> None:
@@ -146,7 +148,7 @@ class TokenRepository(ABC):
         :param token: Access token value
         :type token: Token
         """
-        ...
+        ...  # pragma: no cover
 
     @abstractmethod
     async def forget_token(self, token: Token) -> None:
@@ -155,4 +157,4 @@ class TokenRepository(ABC):
         :param token: Access token value
         :type token: Token
         """
-        ...
+        ...  # pragma: no cover

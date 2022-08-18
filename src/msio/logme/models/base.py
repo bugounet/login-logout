@@ -13,7 +13,8 @@ class Base:
         return cls.__name__
 
     def dict(self) -> Dict[str, Any]:
-        return {
+        dict_representation = {
             c.key: getattr(self, c.key)
             for c in inspect(self).mapper.column_attrs
         }
+        return dict_representation

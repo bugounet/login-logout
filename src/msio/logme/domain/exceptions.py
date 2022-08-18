@@ -6,6 +6,12 @@ class IdentityAlreadyInUse(Exception):
     pass
 
 
+class NonExistentUser(Exception):
+    """Raised when the user you want to forget does not exist."""
+
+    pass
+
+
 class UnavailableRepositoryError(Exception):
     """This exception is raised when database is unavailable
     so that the API can handle it and return a 503 error or whatever
@@ -30,6 +36,14 @@ class InvalidCredentialsError(Exception):
 class InvalidTokenError(Exception):
     """Raised when the given token is not a JWT or is missing
     Essential claims
+    """
+
+    pass
+
+
+class InvalidRegistrationRequestError(Exception):
+    """Raised if the registration request receives invalid data
+    that will block user registration like a first name too long.
     """
 
     pass

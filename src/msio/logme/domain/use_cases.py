@@ -3,6 +3,7 @@ from pydantic import EmailStr
 
 from msio.logme.core.config import settings
 from msio.logme.domain.entities import Token, User, UserRegistrationRequest
+from msio.logme.domain.exceptions import UnavailableRepositoryError
 from msio.logme.domain.repositories import TokenRepository, UserRepository
 from msio.logme.schemas.login import LoginParameters
 from msio.logme.schemas.token import TokenPayload
@@ -14,12 +15,18 @@ class GetOrCreateFirstUser:
 
     async def __call__(
         self, first_user_definition: UserRegistrationRequest
-    ):
-        found_user = await self.user_repository.find_user_by_email(
-            email_address=EmailStr(first_user_definition.email)
-        )
-        if not found_user:
-            await self.user_repository.register_user(first_user_definition)
+    ) -> bool:
+        try:
+            found_user = await self.user_repository.find_user_by_email(
+                email_address=EmailStr(first_user_definition.email)
+            )
+            if not found_user:
+                await self.user_repository.register_user(
+                    first_user_definition
+                )
+            return True
+        except UnavailableRepositoryError:
+            return False
 
 
 class LoginUseCase:
@@ -32,9 +39,13 @@ class LoginUseCase:
         self.token_repository = token_repository
 
     async def __call__(self, login_parameters: LoginParameters) -> Token:
+        password_hash = User.compute_password_hash(
+            login_parameters.password,
+            settings.SECRET_KEY.get_secret_value(),
+        )
         user = await self.user_repository.find_user_using_credentials(
             login_parameters.username,
-            User.compute_password_hash(login_parameters.password),
+            password_hash,
         )
         payload = TokenPayload.from_user(user).dict()
         access_token = jwt.encode(
