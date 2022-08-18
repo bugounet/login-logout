@@ -13,3 +13,15 @@ class UnavailableRepositoryError(Exception):
     """
 
     pass
+
+
+class UnknownUserError(Exception):
+    """We didn't find user with given email/id"""
+
+    pass
+
+
+class InvalidCredentialsError(Exception):
+    """Invalid passowrd given"""
+
+    pass

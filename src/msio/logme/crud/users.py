@@ -7,8 +7,11 @@ from sqlalchemy.future import select
 
 from msio.logme.core.config import settings
 from msio.logme.domain.entities import User as UserEntity
-from msio.logme.domain.entities import UserRegistration
-from msio.logme.domain.exceptions import IdentityAlreadyInUse
+from msio.logme.domain.entities import UserRegistrationRequest
+from msio.logme.domain.exceptions import (
+    IdentityAlreadyInUse,
+    InvalidCredentialsError,
+)
 from msio.logme.domain.repositories import UserRepository
 from msio.logme.models.users import User as ORMUser
 
@@ -25,7 +28,7 @@ def orm_user_adapter(database_user_model: ORMUser) -> UserEntity:
     )
 
 
-class PostgresRepository(UserRepository):
+class PostgresUserRepository(UserRepository):
     """This AsyncIO based repository will implement postgresql
     interactions with the API by following interface defined by the
     UserRepository interface.
@@ -34,27 +37,43 @@ class PostgresRepository(UserRepository):
     def __init__(self, database_session: AsyncSession):
         self.database_session = database_session
 
+    async def find_user_using_credentials(
+        self, email: EmailStr, hashed_password: str
+    ) -> UserEntity:
+        lookup = select(ORMUser).filter(
+            ORMUser.email == email, ORMUser.password == hashed_password
+        )
+        result = await self.database_session.execute(lookup)
+        db_user = result.scalars().first()
+        if not db_user:
+            raise InvalidCredentialsError()
+        return orm_user_adapter(db_user)
+
     async def find_user_by_id(self, user_id: int) -> UserEntity | None:
         lookup = select(ORMUser).filter(ORMUser.id == user_id)
         result = await self.database_session.execute(lookup)
-        return result.scalars().first()
+        db_user = result.scalars().first()
+        return orm_user_adapter(db_user)
 
     async def find_user_by_email(
         self, email_address: EmailStr
     ) -> UserEntity | None:
-        lookup = select(ORMUser).filter(ORMUser.email == str(email_address))
+        lookup = select(ORMUser).filter(
+            ORMUser.email == str(email_address)
+        )
         result = await self.database_session.execute(lookup)
-        return result.scalars().first()
+        db_user = result.scalars().first()
+        return orm_user_adapter(db_user)
 
     async def fetch_all_users(
         self, *, offset: int, limit: int = settings.API_PAGES_SIZE
     ) -> List[UserEntity]:
         lookup = select(ORMUser).offset(offset).limit(limit)
         users = await self.database_session.execute(lookup)
-        return map(orm_user_adapter, users.scalars())
+        return list(map(orm_user_adapter, users.scalars()))
 
     async def register_user(
-        self, user_registration: UserRegistration
+        self, user_registration: UserRegistrationRequest
     ) -> UserEntity:
         # create user in database
         db_user = ORMUser(

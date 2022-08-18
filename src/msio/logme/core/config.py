@@ -2,7 +2,13 @@ from os import getenv, path
 from typing import Any, Dict, Optional
 
 import yaml
-from pydantic import BaseSettings, EmailStr, PostgresDsn, SecretStr, validator
+from pydantic import (
+    BaseSettings,
+    EmailStr,
+    PostgresDsn,
+    SecretStr,
+    validator,
+)
 
 from msio.logme.core.constants import CONFIG_FILE
 
@@ -28,7 +34,6 @@ class Settings(BaseSettings):
     ) -> str:
         if isinstance(v, str):
             return v
-        print("Validating postgres connection")
         password: SecretStr = values.get("PG_PASSWORD", SecretStr(""))
         return "{scheme}://{user}:{password}@{host}/{db}".format(
             scheme="postgresql+asyncpg",
@@ -54,11 +59,15 @@ def load_config_from_file() -> Settings:
     with open(CONFIG_FILE, "r") as f:
         data = yaml.safe_load(f)
         config = Settings(
-            PROJECT_NAME=data.get("MSIO_LOG_ME_PROJECT_NAME", default="LogMe"),
+            PROJECT_NAME=data.get(
+                "MSIO_LOG_ME_PROJECT_NAME", default="LogMe"
+            ),
             PG_NAME=data.get("MSIO_LOG_ME_PG_DB", default="LogMe"),
             PG_HOST=data.get("MSIO_LOG_ME_PG_HOST", default="localhost"),
             PG_USER=data.get("MSIO_LOG_ME_PG_USER", default="root"),
-            PG_PASSWORD=data.get("MSIO_LOG_ME_PG_PASSWORD", default="toor"),
+            PG_PASSWORD=data.get(
+                "MSIO_LOG_ME_PG_PASSWORD", default="toor"
+            ),
             PG_CHECK_SAME_THREAD=data.get(
                 "MSIO_LOG_ME_PG_CHECK_SAME_THREAD", default=True
             ),
@@ -74,7 +83,9 @@ def load_config_from_file() -> Settings:
             ACCESS_TOKEN_EXPIRE_MINUTES=data.get(
                 "MSIO_LOG_ME_ACCESS_TOKEN_EXPIRE_MINUTES", default=30
             ),
-            REDIS_HOST=data.get("MSIO_LOG_ME_REDIS_HOST", default="localhost"),
+            REDIS_HOST=data.get(
+                "MSIO_LOG_ME_REDIS_HOST", default="localhost"
+            ),
             REDIS_PORT=data.get("MSIO_LOG_ME_REDIS_PORT", default=6380),
         )
     return config

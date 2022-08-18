@@ -18,6 +18,7 @@ passlib = "^1.7"
 alembic = "^1.8.1"
 psycopg2-binary = "^2.9.3"
 asyncpg = "^0.26.0"
+python-multipart = "^0.0.5"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.1"
@@ -36,13 +37,14 @@ testpaths = [
 max-doc-length = 72
 
 [tool.black]
-line-length = 79
+line-length = 75
 target-version = ['py310']
 
 [tool.isort]
 profile = "black"
 multi_line_output = 3
 py_version = 310
+line_length = 75
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
