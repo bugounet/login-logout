@@ -25,3 +25,11 @@ class InvalidCredentialsError(Exception):
     """Invalid passowrd given"""
 
     pass
+
+
+class InvalidTokenError(Exception):
+    """Raised when the given token is not a JWT or is missing
+    Essential claims
+    """
+
+    pass

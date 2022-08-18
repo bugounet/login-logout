@@ -2,7 +2,9 @@ from fastapi import FastAPI
 
 from msio.logme.api import router
 from msio.logme.core import config
+from msio.logme.core.dependencies import use_database
 from msio.logme.fixtures import create_first_user
+from msio.logme.implementation.users import PostgresUserRepository
 
 
 def create_application() -> FastAPI:
@@ -18,4 +20,6 @@ app = create_application()
 @app.on_event("startup")
 async def load_fixtures():
     configuration = config.load_config_file()
-    await create_first_user(configuration)
+    async with use_database() as database_session:
+        user_repository = PostgresUserRepository(database_session)
+        await create_first_user(configuration, user_repository)

@@ -6,13 +6,13 @@ from sqlalchemy.exc import InterfaceError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import Response
 
-from msio.logme.api.dependencies import get_session
+from msio.logme.core.dependencies import database_session
 
 router = APIRouter(prefix="/health", tags=["Health"])
 
 
 @router.get("/", status_code=204)
-async def health(session: AsyncSession = Depends(get_session)):
+async def health(session: AsyncSession = Depends(database_session)):
     """Service healthcheck."""
     try:
         await asyncio.wait_for(session.execute("SELECT 1"), timeout=1)

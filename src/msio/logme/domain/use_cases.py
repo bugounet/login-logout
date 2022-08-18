@@ -38,7 +38,8 @@ class LoginUseCase:
         )
         payload = TokenPayload.from_user(user).dict()
         access_token = jwt.encode(
-            payload, key=settings.SECRET_KEY.get_secret_value()
+            payload,
+            key=settings.SECRET_KEY.get_secret_value(),
         )
         token = Token(value=access_token, user_id=user.id)
         await self.token_repository.save_token(token)
@@ -49,7 +50,6 @@ class LogoutUseCase:
     def __init__(self, token_repository: TokenRepository):
         self.token_repository = token_repository
 
-    async def __call__(self, header_value: str):
-        token = header_value.lower().split("bearer ")[-1]
-        if await self.token_repository.has_token(token):
-            await self.token_repository.forget_token(token)
+    async def __call__(self, access_token: Token):
+        if await self.token_repository.has_token(access_token):
+            await self.token_repository.forget_token(access_token)

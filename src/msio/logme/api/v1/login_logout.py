@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Form, Header, HTTPException
+from fastapi import APIRouter, Depends, Form, HTTPException
 from pydantic import EmailStr
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
 from msio.logme.api.dependencies import (
+    get_token_payload,
     get_token_repository,
     get_user_repository,
 )
@@ -31,6 +32,11 @@ async def login_view(
     user_repository: UserRepository = Depends(get_user_repository),
     token_repository: TokenRepository = Depends(get_token_repository),
 ):
+    """Log user in using simple HTTP Form encoded request.
+
+    Given an email and a password, this view will check
+    proposed data and return an access token in case of success.
+    """
     use_case = LoginUseCase(user_repository, token_repository)
     try:
 
@@ -45,12 +51,20 @@ async def login_view(
         raise HTTPException(503, detail="Service temporarily down")
 
 
-@router.get("/logout")
+async def request_to_token_adapter(token: Token) -> TokenEntity:
+    token_payload = await get_token_payload(token.access_token)
+    return TokenEntity(
+        value=token.access_token, user_id=token_payload.user_id
+    )
+
+
+@router.post("/logout")
 async def logout_view(
-    Authorization: str | None = Header(default=None),
+    token: Token,
     token_repository: TokenRepository = Depends(get_token_repository),
 ):
     """Invalidate an access token you did generate"""
     use_case = LogoutUseCase(token_repository)
-    await use_case(Authorization)
-    return JSONResponse(status_code=204)
+    token_entity = await request_to_token_adapter(token)
+    await use_case(token_entity)
+    return Response(status_code=204)

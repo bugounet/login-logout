@@ -17,6 +17,8 @@ from msio.logme.models.users import User as ORMUser
 
 
 def orm_user_adapter(database_user_model: ORMUser) -> UserEntity:
+    if not database_user_model:
+        return None
     # adapters in clean architecture or hex architecture are dump
     # pieces of software passing data from an application layer to another
     return UserEntity(
