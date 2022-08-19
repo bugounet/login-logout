@@ -8,6 +8,7 @@ from msio.logme.domain.exceptions import (
     UnavailableRepositoryError,
 )
 from msio.logme.domain.repositories import UserRepository
+from msio.logme.domain.schemas import Identity
 from msio.logme.implementation.tokens import ThreadMemoryTokenRepository
 from tests.testing_datasets import TESTING_USER
 
@@ -69,6 +70,16 @@ class TestingUserRepository(UserRepository):
             return TESTING_USER
         else:
             raise NonExistentUser()
+
+    async def rename_user_using_id(
+        self, user_id: int, identity: Identity
+    ) -> None:
+        pass
+
+    async def change_password_using_id(
+        self, user_id: int, hashed_password: str
+    ) -> None:
+        pass
 
 
 # The "ThreadMemory" repository doesn't need network or anything so I'll
