@@ -4,7 +4,7 @@ from msio.logme.domain.exceptions import (
     InvalidCredentialsError,
     UnavailableRepositoryError,
 )
-from msio.logme.domain.schemas import LoginParameters
+from msio.logme.domain.schemas import Login
 from msio.logme.use_cases import (
     GetOrCreateFirstUser,
     LoginUseCase,
@@ -76,7 +76,7 @@ class TestLoginUseCase:
         repository = TestingUserRepository(
             lookup_success=lookup_success, db_down=db_down
         )
-        login_parameters = LoginParameters(
+        login_parameters = Login(
             username="john.doe@example.com", password="password"
         )
 
@@ -91,7 +91,7 @@ class TestLoginUseCase:
         repository = TestingUserRepository(
             lookup_success=True, db_down=False
         )
-        login_parameters = LoginParameters(
+        login_parameters = Login(
             username="john.doe@example.com", password="password"
         )
 

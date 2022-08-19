@@ -14,7 +14,7 @@ from msio.logme.domain.exceptions import (
     UnknownUserError,
 )
 from msio.logme.domain.repositories import TokenRepository, UserRepository
-from msio.logme.domain.schemas import LoginParameters, Token
+from msio.logme.domain.schemas import Login, Token
 from msio.logme.use_cases import LoginUseCase, LogoutUseCase
 
 router = APIRouter()
@@ -39,9 +39,7 @@ async def login_view(
     use_case = LoginUseCase(user_repository, token_repository)
     try:
 
-        token = await use_case(
-            LoginParameters(username=username, password=password)
-        )
+        token = await use_case(Login(username=username, password=password))
         response = token_to_api_adapter(token).dict()
         return JSONResponse(status_code=200, content=response)
     except (UnknownUserError, InvalidCredentialsError):

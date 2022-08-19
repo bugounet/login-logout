@@ -5,6 +5,7 @@ from pydantic import EmailStr
 
 from msio.logme.core.config import settings
 from msio.logme.domain.entities import Token, User, UserRegistrationRequest
+from msio.logme.domain.schemas import Identity
 
 
 class UserRepository(ABC):
@@ -120,6 +121,40 @@ class UserRepository(ABC):
         """
         ...  # pragma: no cover
 
+    @abstractmethod
+    async def rename_user_using_id(
+        self, user_id: int, identity: Identity
+    ) -> None:
+        """Rename user with id `user_id` using input `identity`.
+
+        :raises: UnavailableRepositoryError
+        :raises: UnkownUserError
+
+        :param user_id: User identifier
+        :type user_id: int
+
+        :param identity: New user-names
+        :type identity: Identity
+        """
+        ...  # pragma: no cover
+
+    @abstractmethod
+    async def change_password_using_id(
+        self, user_id: int, hashed_password: str
+    ) -> None:
+        """Change user password in base.
+
+        :raises: UnavailableRepositoryError
+        :raises: UnkownUserError
+
+        :param user_id: User identifier
+        :type user_id: int
+
+        :param hashed_password: New password hash
+        :type hashed_password: str
+        """
+        ...  # pragma: no cover
+
 
 class TokenRepository(ABC):
     """Store tokens somewhere so that if user logs-out
@@ -156,5 +191,14 @@ class TokenRepository(ABC):
 
         :param token: Access token value
         :type token: Token
+        """
+        ...  # pragma: no cover
+
+    @abstractmethod
+    async def forget_user(self, user_id: int) -> None:
+        """Forget all tokens issued for a given user
+
+        :param user: id of the User to block
+        :type user: int
         """
         ...  # pragma: no cover

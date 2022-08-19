@@ -5,9 +5,9 @@ from pydantic import BaseModel, EmailStr, PositiveInt, SecretStr, constr
 from msio.logme.domain.entities import User
 
 
-class LoginParameters(BaseModel):
+class Login(BaseModel):
     username: EmailStr
-    password: str
+    password: SecretStr
 
 
 class Token(BaseModel):
@@ -33,17 +33,17 @@ class UserBase(BaseModel):
     email: EmailStr
 
 
-class IdentitySchema(BaseModel):
+class Identity(BaseModel):
     first_name: constr(max_length=50) | None
     last_name: constr(max_length=50) | None
     username: constr(max_length=50) | None
 
 
-class PasswordSchema(BaseModel):
+class Password(BaseModel):
     password: SecretStr | None
 
 
-class UserRegistration(IdentitySchema, PasswordSchema):
+class UserRegistration(Identity, Password):
     """This schema will be used to create
     new users.
     """

@@ -6,8 +6,8 @@ from msio.logme.api.dependencies import (
     get_token_payload,
     verify_token,
 )
+from msio.logme.domain.schemas import TokenPayload
 from msio.logme.implementation.tokens import ThreadMemoryTokenRepository
-from msio.logme.schemas.token import TokenPayload
 from tests.domain.testing_repositories import TestingUserRepository
 from tests.testing_datasets import TESTING_USER, TESTING_VALID_TOKEN
 
