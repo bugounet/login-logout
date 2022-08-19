@@ -1,4 +1,4 @@
-from msio.logme.domain.entities import Token
+from msio.logme.domain.entities import Token, User
 from msio.logme.domain.repositories import TokenRepository
 
 

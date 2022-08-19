@@ -1,15 +1,17 @@
 from http.client import CREATED, FORBIDDEN, NOT_FOUND
 
 from fastapi import APIRouter, Depends, HTTPException
-from starlette.responses import JSONResponse
+from starlette.responses import JSONResponse, Response
 
 from msio.logme.api.dependencies import (
     get_current_user,
+    get_logged_admin,
+    get_token_repository,
     get_user_repository,
 )
 from msio.logme.core.config import settings
 from msio.logme.domain.entities import User, UserRegistrationRequest
-from msio.logme.domain.repositories import UserRepository
+from msio.logme.domain.repositories import TokenRepository, UserRepository
 from msio.logme.schemas.users import (
     IdentitySchema,
     PasswordSchema,
@@ -35,13 +37,13 @@ def user_to_api_adapter(user: User) -> UserBase:
 async def list_users(
     offset: int = 0,
     limit: int = settings.API_PAGES_SIZE,
-    logged_user: User = Depends(get_current_user),
+    _logged_admin: User = Depends(get_logged_admin),
     user_repository: UserRepository = Depends(get_user_repository),
 ):
-    if logged_user.email != settings.FIRST_USER_EMAIL:
-        raise HTTPException(
-            status_code=FORBIDDEN, detail="Permission denied."
-        )
+    """ Get user information given his id.
+
+    Constraints: Admin rights required
+    """
     users_list = await user_repository.fetch_all_users(
         offset=offset, limit=limit
     )
@@ -57,11 +59,17 @@ async def get_user(
     user_id: int,
     logged_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(get_user_repository),
-):
+) -> UserBase:
+    """ Get user information given his id.
+
+    Constraints: Admin rights required or resource ownership
+    """
     observed_user = await user_repository.find_user_by_id(user_id)
     # if user is not found
     if not observed_user:
         raise HTTPException(status_code=NOT_FOUND, detail="Not found.")
+
+    # Permission check:
     # only first user can read others data, otherwise hide it
     # (we could also return a 403)
     if (
@@ -69,6 +77,8 @@ async def get_user(
         and logged_user.email != settings.FIRST_USER_EMAIL
     ):
         raise HTTPException(status_code=NOT_FOUND, detail="Not found.")
+
+    # if checks are OK, return found user
     return user_to_api_adapter(observed_user)
 
 
@@ -77,7 +87,11 @@ async def create_user(
     user_data: UserRegistration,
     logged_user: User = Depends(get_current_user),
     user_repository: UserRepository = Depends(get_user_repository),
-):
+) -> UserBase:
+    """ Get user information given his id.
+
+    Constraints: Admin rights required
+    """
     if logged_user.email != settings.FIRST_USER_EMAIL:
         raise HTTPException(
             status_code=FORBIDDEN, detail="Permission denied."
