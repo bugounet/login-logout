@@ -23,34 +23,15 @@ les tests passent.
 ![les tests sont au vert](images/tests-ok.png)
 
 Il me manque un dernier truc dans mon setup:
-une base de données.  
-
-Il va me falloir une instance PG. Je n'ai pas
-envie de souiller mon ordi, donc je vais le
+une base de données.  Je vais le
 mettre dans un conteneur docker. J'en profite
 pour te remettre le `docker-compose.yml`. 
-Rien de fou, je mets 2 services, PG et l'API.
-
-Me voilà parti pour créer mes 
-`Dockerfile`, `docker-compose.yml` et 
-`.Dockerignore`. 
 
 Je fige une version de poetry
 dans les build-args pour éviter les 
-évolutions cassantes, mais pouvoir me 
-mettre à jour.
-
-Je préfère éviter de télécharger poetry 
-à coups de `curl | python` dans le conteneur 
-docker : on ne sait jamais ce qu'on va
-récupérer. Ce sera `pip install` pour moi.
-
+évolutions cassantes, et par principe de précaution.
 J'exploite les variables d'env prévues dans le
 fichier `config.py`.
-
-_note pour plus tard: penser à documenter 
-les vars d'env pour ceux qui vont déployer
-ça en prod'_
 
 Si tu veux jouer avec, voici les commandes pour
 build l'image manuellement, run un conteneur
@@ -62,19 +43,12 @@ docker run -p 8000:8000 --env-file ./docker/.env api
 docker compose -f docker/docker-compose.yml up --build
 ```
 
-Mon docker-compose.yml étant créé, je me rends
-compte qu'il faut former la DB. pour ça 
-il y a Alembic, qui va me permettre de créer
-des "migrations" de schéma. Il n'est pas dans
-le `pyproject.toml`. Je l'ajoute.
+Pour former la DB j'ai vu ton fichier SQL. Je préfère utiliser
+a Alembic car il me permettra de faire des migrations de schéma,
+sur le long terme. Il n'est pas dans le `pyproject.toml` donc
+je l'ajoute.
 
 J'ajoute alembic, et psycopg2-binary pour
 pouvoir run mes migrations.
 
-Temps passé sur cette étape :
-environ 3h. J'ai rencontré un petit pépin 
-sur le healthcheck, j'ai donc dormi dessus
-pour trouver mon erreur.
-
-Passons à la suite:
-[créer le premier utilisateur](03-creer-first-user.md)
+[--> créer le premier utilisateur](03-creer-first-user.md)

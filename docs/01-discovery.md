@@ -35,10 +35,10 @@ aiguiller sur l'emplacement espéré des tests que
 pour vraiment tester le boostrap que tu m'as 
 envoyé.
 
-J'ai pour habitude de bosser avec du TDD, donc
-j'envisage déjà d'aller ajouter hypothesis et 
-ou factoryboy pour m'outiller un peu plus dans
-l'écriture des tests.
+Vu le scope et le temps dont je dispose, je ne ferai
+pas ce test en TDD. Néanmoins, je tenterai peut-être
+d'importer hypothesis ou factoryboy pour m'outiller 
+un peu plus si nécessaire.
 
 Tu fournis le modèle SQL Alchemy qui stocke
 les utilisateurs. C'est ça de pris. Je sais 
@@ -50,7 +50,7 @@ vois aussi que tu as créé un router fastAPI
 que où tu as déjà pris le temps de supprimer
 tes vues. À défaut de me fournir une convention
 pour les endpoints API, j'ai le format des données,
-et ca me guide sur les noms des classes. :]
+et ca me guide un peu. :]
 
 Le main contient l'init de l'appli, mais aussi
 des vues bateau. Je vais les appeler vite fait
@@ -73,7 +73,8 @@ Donc pour commencer, je pense que je vais faire ça:
 bootstrap
 
 Rien de fou là dedans, juste ce qu'il faut pour 
-avoir un environnement qui boot
+avoir un environnement qui boot, tout dans
+des images docker pour pas polluer ma machine.
 
 2. Créer un utilisateur via command-line
 
@@ -88,14 +89,16 @@ au boot du server.
 3. Recréer les endpoints que tu as retiré
 
 Je vais faire déjà deux endpoints: /v1/login et
-/v1/logout. Faura pendre le temps de choisir le
-verbe, le format des paramètres, les codes
-attendus. Je documenterai tout ça plus loin
-dans la doc. Faudra aussi que je mette un peu
-de sécurité (du throttling?)
+/v1/logout. Je documenterai tout ça plus loin
+dans la doc. Si j'ai assez de temps ce dont je doute
+je devrai mettre un peu de sécurité (du throttling d'api
+invalidation de tokens, hachage des mots de passe etc.)
 
-4. (pas sûr, on verra) Ajouter des tests pour sécuriser le bootstrap
-que tu m'as envoyé
+4. Ajouter des tests pour sécuriser le bootstrap
+que tu m'as envoyé.
+
+Je me doute que ça prend du temps mais
+un code sans test ça me ressemble pas.
 
 5. réaliser le CRUD
 
@@ -105,9 +108,7 @@ changer son nom/prénom, le supprimer, lui créer
 des copains. J'ai pas d'info, je vais
 mettre une seule contrainte sur ces appels:
 seul l'utilisateur initial pourra faire ces
-actions. Vu que je suis pas sûr de cette règle,
-je vais m'arranger pour qu'elle soit facilement 
-remplaçable.
+actions. Ce sera mon admin.
 
 6. un peu de nettoyage
 

@@ -1,11 +1,5 @@
 # Recréer les endpoints que tu as supprimé
 
-A force de toucher aux sources, je me suis rendu
-compte que certes les endpoints login et logout
-sont manquants, mais tous les endpoints
-du CRUD le sont aussi. Ce n'est pas grave, je vais
-m'en occuper.
-
 Pour implémenter ce CRUD, je choisis de partir
 sur une implémentation en clean architecture.
 Cette architecture va me permettre de décorréler
@@ -30,8 +24,8 @@ La logique métier va se trouver dans les use-cases
 ainsi que dans les entités. Exemple : le calcul
 du hash des mots de passe des utilisateurs
 va être rangée dans l'entité utilisateur
-tandis que la génération d'un access token
-à partir de l'utilisateur sera plutôt côté 
+tandis que la désactivation des tokens de l'utilisateur
+lorsqu'il change de mot de passe sera plutôt côté 
 use-case.
 
 Premier résultat : j'ai ma fonction de login sans
@@ -47,3 +41,16 @@ Je procède ainsi jusqu'à avoir les endpoints
 - logout
 - les 4 routes de CRUD sur l'utilisateur
 
+Pour que le logout soit fonctionnel, je dois
+garder en mémoire la liste des tokens générés 
+pour pouvoir se déconnecter. J'ai vu dans le 
+sample que tu avais utilisé redis.
+
+Vu que je ne suis pas en plein weekend, j'ai
+moins de temps. Je me contente d'un dict en thread
+local. Malgré ce choix, j'ai quand même l'interface
+prête à être swapped pour du redis si on change
+d'avis parce que j'ai écrit une abstraction de 
+l'interface.
+
+[--> ecriture des tests](05-ecrire-les-tests.md)
