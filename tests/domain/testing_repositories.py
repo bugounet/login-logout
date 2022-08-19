@@ -9,7 +9,7 @@ from msio.logme.domain.exceptions import (
 )
 from msio.logme.domain.repositories import UserRepository
 from msio.logme.implementation.tokens import ThreadMemoryTokenRepository
-from tests.domain.testing_datasets import TESTING_USER
+from tests.testing_datasets import TESTING_USER
 
 
 class TestingUserRepository(UserRepository):

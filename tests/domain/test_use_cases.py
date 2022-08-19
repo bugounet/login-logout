@@ -10,14 +10,14 @@ from msio.logme.domain.use_cases import (
     LogoutUseCase,
 )
 from msio.logme.schemas.login import LoginParameters
-from tests.domain.testing_datasets import (
-    TESTING_ACCESS_TOKEN,
-    TESTING_FIRST_USER_DEFINITION,
-    TESTING_VALID_TOKEN,
-)
 from tests.domain.testing_repositories import (
     TestingTokenRepository,
     TestingUserRepository,
+)
+from tests.testing_datasets import (
+    TESTING_ACCESS_TOKEN,
+    TESTING_FIRST_USER_DEFINITION,
+    TESTING_VALID_TOKEN,
 )
 
 

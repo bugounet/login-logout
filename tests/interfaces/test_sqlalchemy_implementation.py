@@ -3,16 +3,15 @@ import pytest_asyncio
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
+from msio.logme.domain.entities import User as UserEntity
+from msio.logme.domain.entities import UserRegistrationRequest
 from msio.logme.domain.exceptions import InvalidCredentialsError
 from msio.logme.implementation.users import (
     PostgresUserRepository,
     orm_user_adapter,
 )
 from msio.logme.models.users import User as ORMUser
-from tests.interfaces.testing_datasets import (
-    TESTING_ORM_USER,
-    TESTING_USER,
-)
+from tests.testing_datasets import TESTING_ORM_USER, TESTING_USER
 
 
 def test_model_dict_method():
@@ -108,3 +107,31 @@ async def test_find_user_using_credentials(testing_data_set_session):
         await repository.find_user_using_credentials(
             "john.doe@example.com", "wrong-password"
         )
+
+
+@pytest.mark.asyncio
+async def test_fetch_all_users(testing_data_set_session):
+    repository = PostgresUserRepository(testing_data_set_session)
+    found_users = await repository.fetch_all_users(offset=0, limit=1)
+    assert found_users == [TESTING_USER]
+
+
+@pytest.mark.asyncio
+async def test_register_user(testing_data_set_session):
+    repository = PostgresUserRepository(testing_data_set_session)
+    created_user = await repository.register_user(
+        UserRegistrationRequest(
+            first_name="Alice",
+            last_name="Cooper",
+            username="alice-cooper",
+            email="alice.cooper@example.com",
+            password="welcome_to_my_nightmare",
+        )
+    )
+    assert created_user == UserEntity(
+        id=created_user.id,
+        first_name="Alice",
+        last_name="Cooper",
+        username="alice-cooper",
+        email="alice.cooper@example.com",
+    )

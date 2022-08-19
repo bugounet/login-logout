@@ -1,5 +1,6 @@
 # Token
 from msio.logme.domain.entities import Token, User, UserRegistrationRequest
+from msio.logme.models.users import User as ORMUser
 
 TESTING_TOKEN_SIGNATURE = "mysecretkey"
 TESTING_VALID_TOKEN = (
@@ -51,4 +52,13 @@ TESTING_FIRST_USER_DEFINITION = UserRegistrationRequest(
 TESTING_ACCESS_TOKEN = Token(
     value=TESTING_VALID_TOKEN,
     user_id=11,
+)
+
+TESTING_ORM_USER = ORMUser(
+    id=11,
+    firstname="John",
+    lastname="Doe",
+    username="john-doe",
+    email="john.doe@example.com",
+    password="password",
 )

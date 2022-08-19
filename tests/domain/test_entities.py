@@ -5,7 +5,7 @@ from msio.logme.domain.exceptions import (
     InvalidRegistrationRequestError,
     InvalidTokenError,
 )
-from tests.domain.testing_datasets import (
+from tests.testing_datasets import (
     TESTING_PASSWORD_HASH,
     TESTING_PASSWORD_HASH_2,
     TESTING_PASSWORD_VALUE,
