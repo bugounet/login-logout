@@ -124,7 +124,7 @@ class PostgresUserRepository(UserRepository):
 
     async def rename_user_using_id(
         self, user_id: int, identity: Identity
-    ) -> None:
+    ) -> UserEntity:
         def update_identities(session: Session):
             """Synchronous update method that is
             called using run_sync.
