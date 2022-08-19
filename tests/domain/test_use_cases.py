@@ -4,12 +4,12 @@ from msio.logme.domain.exceptions import (
     InvalidCredentialsError,
     UnavailableRepositoryError,
 )
-from msio.logme.domain.use_cases import (
+from msio.logme.domain.schemas import LoginParameters
+from msio.logme.use_cases import (
     GetOrCreateFirstUser,
     LoginUseCase,
     LogoutUseCase,
 )
-from msio.logme.schemas.login import LoginParameters
 from tests.domain.testing_repositories import (
     TestingTokenRepository,
     TestingUserRepository,

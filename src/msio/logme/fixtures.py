@@ -1,7 +1,7 @@
 from msio.logme.core.config import Settings
 from msio.logme.domain.entities import UserRegistrationRequest
 from msio.logme.domain.repositories import UserRepository
-from msio.logme.domain.use_cases import GetOrCreateFirstUser
+from msio.logme.use_cases import GetOrCreateFirstUser
 
 
 async def create_first_user(
