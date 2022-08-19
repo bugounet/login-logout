@@ -21,4 +21,17 @@ critiques de sécurité.
 
 Le carnet de bord du test technique se trouve [ici](docs/01-discovery.md)
 
+# Running instructions
 
+Run and build the project using docker compose.
+
+```shell
+# create your .env file
+cp docker/.env.dist  docker/.env
+vim docker/.env
+# run docker
+ docker compose -f docker/docker-compose.yml up --build
+```
+
+open [http://localhost:8000/docs](http://localhost:8000/docs)
+to get the swagger of the project.

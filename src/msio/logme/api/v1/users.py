@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from msio.logme.api.dependencies import (
     USER_API_DEFAULT_RESPONSES,
@@ -110,9 +110,9 @@ async def create_user(
         registration_request
     )
 
-    return Response(
+    return JSONResponse(
         status_code=status.HTTP_201_CREATED,
-        content=user_to_api_adapter(created_user),
+        content=user_to_api_adapter(created_user).dict(),
     )
 
 

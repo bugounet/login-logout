@@ -11,7 +11,7 @@ from dataclasses import InitVar, dataclass, field
 from hashlib import sha256
 
 from jwt import PyJWTError, decode
-from pydantic import ValidationError
+from pydantic import SecretStr, ValidationError
 
 from msio.logme.core.config import settings
 from msio.logme.domain.exceptions import (
@@ -58,7 +58,7 @@ class User:
     email: str
 
     @staticmethod
-    def compute_password_hash(password: str, secret) -> str:
+    def compute_password_hash(password: str, secret: str) -> str:
         # I'm using app's secret to hash the password.
         # It's easy to use sha256 even though a
         # hashing method that is specifically designed for this
@@ -75,10 +75,10 @@ class UserRegistrationRequest:
     last_name: str
     username: str
     email: str
-    password: InitVar[str]
+    password: InitVar[SecretStr | str]
     password_hash: str = field(init=False)
 
-    def __post_init__(self, password: str):
+    def __post_init__(self, password: SecretStr | str):
         """User registration holds the responsiblity
         to validate registration requests.
         """
@@ -100,6 +100,8 @@ class UserRegistrationRequest:
 
         # compute the password hash because we won't
         # store user's plain password
+        if isinstance(password, SecretStr):
+            password = password.get_secret_value()
         self.password_hash = User.compute_password_hash(
             password, settings.SECRET_KEY.get_secret_value()
         )

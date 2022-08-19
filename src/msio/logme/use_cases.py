@@ -46,9 +46,6 @@ class LoginUseCase:
             login_form.password.get_secret_value(),
             settings.SECRET_KEY.get_secret_value(),
         )
-        print(login_form.password.get_secret_value())
-        print(settings.SECRET_KEY.get_secret_value())
-        print(password_hash)
         user = await self.user_repository.find_user_using_credentials(
             login_form.username,
             password_hash,
@@ -85,9 +82,6 @@ class ResetPasswordUseCase:
             new_password.password.get_secret_value(),
             settings.SECRET_KEY.get_secret_value(),
         )
-        print(new_password.password.get_secret_value())
-        print(settings.SECRET_KEY.get_secret_value())
-        print(hashed_password)
         await self.user_repository.change_password_using_id(
             user_id, hashed_password
         )

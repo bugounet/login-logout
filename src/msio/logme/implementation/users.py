@@ -156,7 +156,6 @@ class PostgresUserRepository(UserRepository):
             """Synchronous update method that is
             called using run_sync.
             """
-            print("update password with hash", hashed_password)
             session.query(ORMUser).filter(ORMUser.id == user_id).update(
                 {ORMUser.password: hashed_password}
             )
