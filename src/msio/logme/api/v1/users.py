@@ -11,6 +11,8 @@ from msio.logme.core.config import settings
 from msio.logme.domain.entities import User, UserRegistrationRequest
 from msio.logme.domain.repositories import UserRepository
 from msio.logme.schemas.users import (
+    IdentitySchema,
+    PasswordSchema,
     UserBase,
     UserLookupResults,
     UserRegistration,

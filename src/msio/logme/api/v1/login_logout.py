@@ -14,9 +14,8 @@ from msio.logme.domain.exceptions import (
     UnknownUserError,
 )
 from msio.logme.domain.repositories import TokenRepository, UserRepository
-from msio.logme.domain.use_cases import LoginUseCase, LogoutUseCase
-from msio.logme.schemas.login import LoginParameters
-from msio.logme.schemas.token import Token
+from msio.logme.domain.schemas import LoginParameters, Token
+from msio.logme.use_cases import LoginUseCase, LogoutUseCase
 
 router = APIRouter()
 
