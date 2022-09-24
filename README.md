@@ -1,6 +1,6 @@
 # Login logout API demo
 
-Ceci est un test technique montant une petite api qui propose 8 endpoints:
+Petite api qui propose 8 endpoints:
 - login
 - logout
 - create user
